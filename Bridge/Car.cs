@@ -5,27 +5,21 @@
 /// getting the price for crossing the bridge, and 
 /// what kind of vehicle it is.
 /// </summary>
-public class Car
+public class Car : Vehicle
 {
-    /// <value>
-    /// The <c>LicensePlate</c> property represents a 
-    /// car's license plate for this instance.
-    /// </value>
-    public string LicensePlate { get; set; }
-
-    /// <value>
-    /// The <c>Date</c> property represents a 
-    /// car's allowed crossing date for this instance.
-    /// </value>
-    public DateTime Date { get; set; }
+    public Car(string licensePlate, DateTime date) : base(licensePlate, date)
+    {
+        LicensePlate = licensePlate;
+        Date = date;
+    }
 
     /// <summary>
     /// Gets the car's crossing price and returns it.
     /// </summary>
-    public double Price() => 230;
+    public override double Price() => 230;
 
     /// <summary>
     /// Gets the car's vehicle type and returns it.
     /// </summary>
-    public string VehicleType() => "Car";
+    public override string VehicleType() => "Car";
 }
