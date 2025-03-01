@@ -11,13 +11,23 @@ public abstract class Vehicle
     /// The <c>LicensePlate</c> property represents a 
     /// vehicles's license plate for this instance.
     /// </value>
-    protected string LicensePlate { get; set; }
+    public string LicensePlate
+    {
+        get => LicensePlate;
+        protected set
+        {
+            if (value.Length > 7)
+            {
+                throw new ArgumentException("License plate may not be more than 7 characters long.", "LicensePlate");
+            }
+        }
+    }
 
     /// <value>
     /// The <c>Date</c> property represents a 
     /// vehicles's allowed crossing date for this instance.
     /// </value>
-    protected DateTime Date { get; set; }
+    public DateTime Date { get; protected set; }
 
     /// <summary>
     /// Initializes an instance of a Vehicle with properties 
