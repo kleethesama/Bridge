@@ -7,6 +7,10 @@
 /// </summary>
 public class MC : Vehicle
 {
+    /// <summary>
+    /// Initializes an instance of an MC with properties 
+    /// like LicensePlate and Date.
+    /// </summary>
     public MC(string licensePlate, DateTime date) : base(licensePlate, date)
     {
         LicensePlate = licensePlate;

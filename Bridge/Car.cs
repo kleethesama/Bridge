@@ -7,6 +7,10 @@
 /// </summary>
 public class Car : Vehicle
 {
+    /// <summary>
+    /// Initializes an instance of a Car with properties 
+    /// like LicensePlate and Date.
+    /// </summary>
     public Car(string licensePlate, DateTime date) : base(licensePlate, date)
     {
         LicensePlate = licensePlate;

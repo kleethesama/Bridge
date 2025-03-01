@@ -19,6 +19,11 @@ public abstract class Vehicle
     /// </value>
     protected DateTime Date { get; set; }
 
+    /// <summary>
+    /// Initializes an instance of a Vehicle with properties 
+    /// like LicensePlate and Date. This base class can not 
+    /// be instantiated.
+    /// </summary>
     public Vehicle(string licensePlate, DateTime date)
     {
         LicensePlate = licensePlate;
