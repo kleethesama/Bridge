@@ -11,11 +11,7 @@ public class MC : Vehicle
     /// Initializes an instance of an MC with properties 
     /// like LicensePlate and Date.
     /// </summary>
-    public MC(string licensePlate, DateTime date) : base(licensePlate, date)
-    {
-        LicensePlate = licensePlate;
-        Date = date;
-    }
+    public MC(string licensePlate, DateTime date) : base(licensePlate, date) { }
 
     /// <summary>
     /// Gets the motorcycle's crossing price and returns it.

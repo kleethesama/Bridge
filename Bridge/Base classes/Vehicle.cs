@@ -46,6 +46,14 @@ public abstract class Vehicle
     public abstract double Price();
 
     /// <summary>
+    /// Gets the vehicles's crossing price if there is a price modifier like a Brobizz and returns it.
+    /// </summary>
+    public double Price(VehiclePriceModifier vehiclePriceModifier)
+    {
+        return vehiclePriceModifier.GetNewDiscountPrice();
+    }
+
+    /// <summary>
     /// Gets the vehicles's vehicle type and returns it.
     /// </summary>
     public abstract string VehicleType();

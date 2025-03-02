@@ -11,11 +11,7 @@ public class Car : Vehicle
     /// Initializes an instance of a Car with properties 
     /// like LicensePlate and Date.
     /// </summary>
-    public Car(string licensePlate, DateTime date) : base(licensePlate, date)
-    {
-        LicensePlate = licensePlate;
-        Date = date;
-    }
+    public Car(string licensePlate, DateTime date) : base(licensePlate, date) { }
 
     /// <summary>
     /// Gets the car's crossing price and returns it.
