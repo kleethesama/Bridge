@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Bridge</name>
+    </assembly>
+    <members>
+        <member name="T:Bridge.Vehicle">
+            <summary>
+            A class <c>Vehicle</c> for storing information about vehicles, 
+            getting the price for crossing the bridge, and 
+            what kind of vehicle it is.
+            </summary>
+        </member>
+        <member name="P:Bridge.Vehicle.LicensePlate">
+            <value>
+            The <c>LicensePlate</c> property represents a 
+            vehicles's license plate for this instance.
+            </value>
+        </member>
+        <member name="P:Bridge.Vehicle.Date">
+            <value>
+            The <c>Date</c> property represents a 
+            vehicles's allowed crossing date for this instance.
+            </value>
+        </member>
+        <member name="M:Bridge.Vehicle.#ctor(System.String,System.DateTime)">
+            <summary>
+            Initializes an instance of a <c>Vehicle</c> with properties 
+            like <c>LicensePlate</c> and <c>Date</c>.
+            This base class can not be instantiated and 
+            is only meant to be inherited.
+            </summary>
+        </member>
+        <member name="M:Bridge.Vehicle.Price">
+            <summary>
+            Gets the vehicles's crossing price and returns it.
+            </summary>
+            <returns>
+            The price for the vehicle.
+            </returns>
+        </member>
+        <member name="M:Bridge.Vehicle.Price(Bridge.VehiclePriceModifier)">
+            <summary>
+            Gets the vehicles's crossing price if there 
+            is a price modifier like a Brobizz and returns it.
+            </summary>
+            <remarks>
+            An overloaded helper function that calls the 
+            <c>GetNewDiscountPrice</c> function directly by passing 
+            a <c>VehiclePriceModifier</c> reference.
+            </remarks>
+            <returns>
+            The discount price for the vehicle.
+            </returns>
+            <param name="vehiclePriceModifier">
+            The <c>VehiclePriceModifier</c> object that references 
+            the vehicle object and has the discount factor.
+            </param>
+        </member>
+        <member name="M:Bridge.Vehicle.VehicleType">
+            <summary>
+            Gets the vehicles's vehicle type and returns it.
+            </summary>
+            <returns>
+            The string that represents the vehicle's type.
+            </returns>
+        </member>
+        <member name="T:Bridge.VehiclePriceModifier">
+            <summary>
+            A base class for price modifications to vehicles
+            that have a change in price, for example, 
+            a Brobizz discount.
+            </summary>
+        </member>
+        <member name="P:Bridge.VehiclePriceModifier.Vehicle">
+            <value>
+            The <c>Vehicle</c> property references the 
+            vehicle's <c>Price</c> that is required for applying
+            price modification for this instance.
+            </value>
+        </member>
+        <member name="M:Bridge.VehiclePriceModifier.#ctor(Bridge.Vehicle)">
+            <summary>
+            Initializes an instance of a <c>VehiclePriceModifier</c>
+            with a Vehicle property. 
+            This base class can not be instantiated and 
+            is only meant to be inherited.
+            </summary>
+        </member>
+        <member name="M:Bridge.VehiclePriceModifier.GetNewDiscountPrice">
+            <summary>
+            Gets the new discount price based on
+            the <c>Vehicle</c> property's <c>Price</c>.
+            </summary>
+        </member>
+        <member name="T:Bridge.Price_classes.Brobizz">
+            <summary>
+            A class for the Brobizz price discount.
+            </summary>
+        </member>
+        <member name="M:Bridge.Price_classes.Brobizz.#ctor(Bridge.Vehicle)">
+            <summary>
+            Initializes an instance of a <c>Brobizz</c>
+            with a Vehicle property. 
+            This base class can not be instantiated.
+            </summary>
+        </member>
+        <member name="M:Bridge.Price_classes.Brobizz.GetNewDiscountPrice">
+            <inheritdoc/>
+        </member>
+        <member name="T:Bridge.Car">
+            <summary>
+            A <c>Car</c> class for storing information about a car, 
+            getting the price for crossing the bridge, and 
+            what kind of vehicle it is.
+            </summary>
+        </member>
+        <member name="M:Bridge.Car.#ctor(System.String,System.DateTime)">
+            <summary>
+            Initializes an instance of a <c>Car</c> object with properties 
+            like LicensePlate and Date.
+            </summary>
+        </member>
+        <member name="M:Bridge.Car.Price">
+            <inheritdoc/>
+        </member>
+        <member name="M:Bridge.Car.VehicleType">
+            <inheritdoc/>
+        </member>
+        <member name="T:Bridge.MC">
+            <summary>
+            An MC class for storing information about a motorcycle, 
+            getting the price for crossing the bridge, and 
+            what kind of vehicle it is.
+            </summary>
+        </member>
+        <member name="M:Bridge.MC.#ctor(System.String,System.DateTime)">
+            <summary>
+            Initializes an instance of an <c>MC</c> object with properties 
+            like LicensePlate and Date.
+            </summary>
+        </member>
+        <member name="M:Bridge.MC.Price">
+            <inheritdoc/>
+        </member>
+        <member name="M:Bridge.MC.VehicleType">
+            <inheritdoc/>
+        </member>
+    </members>
+</doc>
