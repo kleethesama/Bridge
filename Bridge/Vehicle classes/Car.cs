@@ -1,25 +1,20 @@
 ﻿namespace Bridge;
 
 /// <summary>
-/// A Car class for storing information about a car, 
+/// A <c>Car</c> class for storing information about a car, 
 /// getting the price for crossing the bridge, and 
 /// what kind of vehicle it is.
 /// </summary>
 public class Car : Vehicle
 {
     /// <summary>
-    /// Initializes an instance of a Car with properties 
+    /// Initializes an instance of a <c>Car</c> object with properties 
     /// like LicensePlate and Date.
     /// </summary>
     public Car(string licensePlate, DateTime date) : base(licensePlate, date) { }
 
-    /// <summary>
-    /// Gets the car's crossing price and returns it.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Price() => 230;
-
-    /// <summary>
-    /// Gets the car's vehicle type and returns it.
-    /// </summary>
+    /// <inheritdoc/>
     public override string VehicleType() => "Car";
 }

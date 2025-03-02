@@ -8,18 +8,13 @@
 public class MC : Vehicle
 {
     /// <summary>
-    /// Initializes an instance of an MC with properties 
+    /// Initializes an instance of an <c>MC</c> object with properties 
     /// like LicensePlate and Date.
     /// </summary>
     public MC(string licensePlate, DateTime date) : base(licensePlate, date) { }
 
-    /// <summary>
-    /// Gets the motorcycle's crossing price and returns it.
-    /// </summary>
+    /// <inheritdoc/>
     public override double Price() => 120;
-
-    /// <summary>
-    /// Gets the motorcycle's vehicle type and returns it.
-    /// </summary>
+    /// <inheritdoc/>
     public override string VehicleType() => "MC";
 }

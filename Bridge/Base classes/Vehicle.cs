@@ -1,7 +1,7 @@
 ﻿namespace Bridge;
 
 /// <summary>
-/// A class Vehicle for storing information about vehicles, 
+/// A class <c>Vehicle</c> for storing information about vehicles, 
 /// getting the price for crossing the bridge, and 
 /// what kind of vehicle it is.
 /// </summary>
@@ -18,7 +18,7 @@ public abstract class Vehicle
         {
             if (value.Length > 7)
             {
-                throw new ArgumentException("License plate may not be more than 7 characters long.", "LicensePlate");
+                throw new ArgumentException("License plate may not be more than 7 characters long.", nameof(LicensePlate));
             }
         }
     }
@@ -30,9 +30,10 @@ public abstract class Vehicle
     public DateTime Date { get; protected set; }
 
     /// <summary>
-    /// Initializes an instance of a Vehicle with properties 
-    /// like LicensePlate and Date. This base class can not 
-    /// be instantiated.
+    /// Initializes an instance of a <c>Vehicle</c> with properties 
+    /// like <c>LicensePlate</c> and <c>Date</c>.
+    /// This base class can not be instantiated and 
+    /// is only meant to be inherited.
     /// </summary>
     public Vehicle(string licensePlate, DateTime date)
     {
@@ -43,12 +44,28 @@ public abstract class Vehicle
     /// <summary>
     /// Gets the vehicles's crossing price and returns it.
     /// </summary>
+    /// <returns>
+    /// The price for the vehicle.
+    /// </returns>
     public abstract double Price();
 
     /// <summary>
-    /// Gets the vehicles's crossing price if there is a price modifier like a Brobizz and returns it.
+    /// Gets the vehicles's crossing price if there 
+    /// is a price modifier like a Brobizz and returns it.
     /// </summary>
-    public double Price(VehiclePriceModifier vehiclePriceModifier)
+    /// <remarks>
+    /// An overloaded helper function that calls the 
+    /// <c>GetNewDiscountPrice</c> function directly by passing 
+    /// a <c>VehiclePriceModifier</c> reference.
+    /// </remarks>
+    /// <returns>
+    /// The discount price for the vehicle.
+    /// </returns>
+    /// <param name="vehiclePriceModifier">
+    /// The <c>VehiclePriceModifier</c> object that references 
+    /// the vehicle object and has the discount factor.
+    /// </param>
+    public static double Price(VehiclePriceModifier vehiclePriceModifier)
     {
         return vehiclePriceModifier.GetNewDiscountPrice();
     }
@@ -56,5 +73,8 @@ public abstract class Vehicle
     /// <summary>
     /// Gets the vehicles's vehicle type and returns it.
     /// </summary>
+    /// <returns>
+    /// The string that represents the vehicle's type.
+    /// </returns>
     public abstract string VehicleType();
 }
