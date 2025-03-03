@@ -11,19 +11,20 @@ public class BrobizzWeekend : Brobizz
         {
             throw new ArgumentException("The Brobizz weekend discount only applies to objects of the type Car.", nameof(vehicle));
         }
-        if (!CheckIfDateIsWeekend(vehicle.Date))
+        if (!CheckIfDateIsWeekend())
         {
             throw new ArgumentException("The Brobizz weekend discount only applies on a weekend.", nameof(vehicle));
         }
     }
 
-    private static bool CheckIfDateIsWeekend(DateTime date)
+    private bool CheckIfDateIsWeekend()
     {
-        return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+        return Vehicle.Date.DayOfWeek == DayOfWeek.Saturday
+            || Vehicle.Date.DayOfWeek == DayOfWeek.Sunday;
     }
 
     public override double GetNewDiscountPrice()
     {
-        return Vehicle.Price() * (1.0 - 0.15);
+        return Vehicle.Price() * (1.0 - 0.15); // 15% price discount.
     }
 }
