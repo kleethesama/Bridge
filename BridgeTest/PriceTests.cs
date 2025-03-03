@@ -12,10 +12,9 @@ public class PriceTests
         var vehicle = new Car("HF38663", DateTime.Now);
         var brobizz = new Brobizz(vehicle);
 
-        double originalPrice = brobizz.Vehicle.Price();
         double newPrice = Vehicle.Price(brobizz); // Price overload
 
         // Doing a floating-point operation to check for floating-point error.
-        Assert.AreEqual(originalPrice * (1.0 - 0.1), newPrice, 1e-6);
+        Assert.AreEqual(230 * (1.0 - 0.1), newPrice, 1e-6);
     }
 }
