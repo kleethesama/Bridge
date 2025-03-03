@@ -1,0 +1,54 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="StoreBaeltTicketLibraryTest" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="StoreBaeltTicketLibraryTest" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="BrobizzWeekendTest" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ApplyBrobizzWeekendDiscountToCar_NotWeekendExceptionThrown" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ApplyBrobizzWeekendDiscountToCar_NotWeekendExceptionThrown" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ApplyBrobizzWeekendDiscountToOtherThanCar" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ApplyBrobizzWeekendDiscountToOtherThanCar" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="StoreBaeltTicketLibraryTest.BrobizzWeekendTest.ApplyBrobizzWeekendDiscountToOtherThanCarExceptionThrown" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ApplyBrobizzWeekendDiscountToOtherThanCarExceptionThrown" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ApplyBrobizzWeekendDiscountToOtherThanCarExceptionThrown" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ApplyBrobizzWeekendDiscountToOtherThanCarExceptionThrown" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ApplyBrobizzWeekendDiscountToCar" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ApplyBrobizzWeekendDiscountToCar" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>
