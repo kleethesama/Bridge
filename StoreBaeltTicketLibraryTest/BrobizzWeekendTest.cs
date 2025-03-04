@@ -10,7 +10,7 @@ public sealed class BrobizzWeekendTest
     public string TestLicensePlate = "HF38663";
 
     [TestMethod]
-    public void ApplyBrobizzWeekendDiscountToOtherThanCarExceptionThrown()
+    public void ApplyBrobizzWeekendDiscountToMotorcycleExceptionThrown()
     {
         bool exceptionCaught = false;
         DateTime date = DateTime.Parse("01-03-2025"); // Saturday
