@@ -101,8 +101,7 @@
         <member name="M:Bridge.Price_classes.Brobizz.#ctor(Bridge.Vehicle)">
             <summary>
             Initializes an instance of a <c>Brobizz</c>
-            with a Vehicle property. 
-            This base class can not be instantiated.
+            with a <c>Vehicle</c> property.
             </summary>
         </member>
         <member name="M:Bridge.Price_classes.Brobizz.GetNewDiscountPrice">

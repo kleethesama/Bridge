@@ -7,8 +7,7 @@ public class Brobizz : VehiclePriceModifier
 {
     /// <summary>
     /// Initializes an instance of a <c>Brobizz</c>
-    /// with a Vehicle property. 
-    /// This base class can not be instantiated.
+    /// with a <c>Vehicle</c> property.
     /// </summary>
     public Brobizz(Vehicle vehicle) : base(vehicle) { }
     
