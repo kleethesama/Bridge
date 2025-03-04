@@ -42,6 +42,12 @@
                         <Property Name="DisplayName" Value="ApplyBrobizzWeekendDiscountToCar" />
                       </Rule>
                     </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="ApplyBrobizzWeekendDiscountToMotorcycleExceptionThrown" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="ApplyBrobizzWeekendDiscountToMotorcycleExceptionThrown" />
+                      </Rule>
+                    </Rule>
                   </Rule>
                 </Rule>
               </Rule>
