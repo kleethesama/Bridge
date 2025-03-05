@@ -26,7 +26,7 @@ public sealed class BrobizzWeekendTest
         }
 
         Assert.IsTrue(exceptionCaught,
-            "The exception for the vehicle not being on a car was not thrown.");
+            "The exception for the vehicle not being a car was not thrown.");
     }
 
     [TestMethod]
