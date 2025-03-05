@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>StoreBaeltTicketLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:StoreBaeltTicketLibrary.BrobizzWeekend">
+            <summary>
+            A class for the Brobizz weekend price discount. 
+            Applies only to cars
+            </summary>
+        </member>
+        <member name="M:StoreBaeltTicketLibrary.BrobizzWeekend.#ctor(Bridge.Vehicle)">
+            <summary>
+            Initializes an instance of a <c>BrobizzWeekend</c>
+            with a <c>Vehicle</c> property.
+            </summary>
+            <param name="vehicle"></param>
+            <exception cref="T:StoreBaeltTicketLibrary.Exception_classes.VehicleIsNotCarException"></exception>
+            <exception cref="T:StoreBaeltTicketLibrary.Exception_classes.DateIsNotWeekendException"></exception>
+        </member>
+        <member name="M:StoreBaeltTicketLibrary.BrobizzWeekend.GetNewDiscountPrice">
+            <inheritdoc/>
+        </member>
+        <member name="T:StoreBaeltTicketLibrary.Exception_classes.DateIsNotWeekendException">
+            <summary>
+            The exception that is thrown when a <c>DateTime</c> 
+            object is not of week day Saturday or Sunday.
+            </summary>
+        </member>
+        <member name="T:StoreBaeltTicketLibrary.Exception_classes.VehicleIsNotCarException">
+            <summary>
+            The exception that is thrown when a <c>Vehicle</c> 
+            object is not a <c>Car</c> object.
+            </summary>
+        </member>
+        <member name="T:StoreBaeltTicketLibrary.Utility_classes.BrobizzUtility">
+            <summary>
+            A helper class that contains useful methods 
+            for checking certain conditions that helps 
+            constrain object initialization.
+            </summary>
+        </member>
+        <member name="M:StoreBaeltTicketLibrary.Utility_classes.BrobizzUtility.CheckIfVehicleIsAllowedType(Bridge.Vehicle,System.Type)">
+            <summary>
+            Used to check if a <c>Vehicle</c> object is of a certain type, 
+            like a <c>Car</c> or <c>MC</c>.
+            </summary>
+            <param name="vehicle"></param>
+            <param name="allowedVehicleType"></param>
+            <returns>
+            <see langword="true"/> if the <c>vehicle</c> 
+            argument is an <c>allowedVehicleType</c> type, 
+            otherwise <see langword="false"/>.
+            </returns>
+        </member>
+        <member name="M:StoreBaeltTicketLibrary.Utility_classes.BrobizzUtility.CheckIfDateIsWeekend(Bridge.Vehicle)">
+            <summary>
+            Used to check if a <c>Vehicle</c> object's <c>Date</c> 
+            property is a weekend day or not.
+            </summary>
+            <param name="vehicle"></param>
+            <returns>
+            <see langword="true"/> if the <c>Vehicle</c> property's 
+            <c>Date</c> property is a Saturday or Sunday, 
+            otherwise <see langword="false"/>.
+            </returns>
+        </member>
+    </members>
+</doc>
