@@ -1,0 +1,43 @@
+<Playlist Version="2.0">
+  <Rule Name="Includes" Match="Any">
+    <Rule Match="All">
+      <Property Name="Solution" />
+      <Rule Match="Any">
+        <Rule Match="All">
+          <Property Name="Project" Value="OresundbronLibraryTest" />
+          <Rule Match="Any">
+            <Rule Match="All">
+              <Property Name="Namespace" Value="OresundbronLibraryTest" />
+              <Rule Match="Any">
+                <Rule Match="All">
+                  <Property Name="Class" Value="BrobizzCarTests" />
+                  <Rule Match="Any">
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="CarWithBrobizz_DiscountMustBeApplied" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="CarWithBrobizz_DiscountMustBeApplied" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="CarWithNoBrobizz_DiscountMustNotBeApplied" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="CarWithNoBrobizz_DiscountMustNotBeApplied" />
+                      </Rule>
+                    </Rule>
+                    <Rule Match="All">
+                      <Property Name="TestWithNormalizedFullyQualifiedName" Value="VehicleIsNotCarType_ExceptionThrown" />
+                      <Rule Match="Any">
+                        <Property Name="DisplayName" Value="VehicleIsNotCarType_ExceptionThrown" />
+                      </Rule>
+                    </Rule>
+                  </Rule>
+                </Rule>
+                <Property Name="Class" Value="BrobizzMCTests" />
+              </Rule>
+            </Rule>
+          </Rule>
+        </Rule>
+      </Rule>
+    </Rule>
+  </Rule>
+</Playlist>
