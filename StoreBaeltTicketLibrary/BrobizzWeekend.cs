@@ -1,5 +1,6 @@
 ﻿using Bridge;
 using Bridge.Price_classes;
+using StoreBaeltTicketLibrary.Utility_classes;
 using StoreBaeltTicketLibrary.Exception_classes;
 
 namespace StoreBaeltTicketLibrary;
@@ -19,28 +20,14 @@ public class BrobizzWeekend : Brobizz
     /// <exception cref="DateIsNotWeekendException"></exception>
     public BrobizzWeekend(Vehicle vehicle) : base(vehicle)
     {
-        if (Vehicle.GetType() != typeof(Car))
+        if (!BrobizzUtility.CheckIfVehicleIsAllowedType(Vehicle, typeof(Car)))
         {
             throw new VehicleIsNotCarException("The Brobizz weekend discount only applies to objects of the type Car.");
         }
-        if (!CheckIfDateIsWeekend())
+        if (!BrobizzUtility.CheckIfDateIsWeekend(Vehicle))
         {
             throw new DateIsNotWeekendException("The Brobizz weekend discount only applies on a weekend.");
         }
-    }
-
-    /// <summary>
-    /// A method used to check if this instance's date is a weekend day or not.
-    /// </summary>
-    /// <returns>
-    /// <see langword="true"/> if the <c>Vehicle</c> property's 
-    /// <c>Date</c> property is a Saturday or Sunday, 
-    /// otherwise <see langword="false"/>.
-    /// </returns>
-    private bool CheckIfDateIsWeekend()
-    {
-        return Vehicle.Date.DayOfWeek == DayOfWeek.Saturday
-            || Vehicle.Date.DayOfWeek == DayOfWeek.Sunday;
     }
 
     /// <inheritdoc/>
