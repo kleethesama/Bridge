@@ -76,24 +76,24 @@ public class Server
         }
     }
 
-    private static void ReadDataFromClient(NetworkStream stream, Task<string?> task) // May have to be ref
+    private void ReadDataFromClient(NetworkStream stream, int index)
     {
         //try
         //{
-            if (task != null)
+            if (ClientDataTaskReaders[index] != null)
             {
-                if (task.IsCompleted)
+                if (ClientDataTaskReaders[index].IsCompletedSuccessfully)
                 {
-                    if (!String.IsNullOrEmpty(task.Result))
+                    if (!String.IsNullOrEmpty(ClientDataTaskReaders[index].Result))
                     {
-                        SendMessageToClient(stream, $"Received your message: {task.Result}");
+                        SendMessageToClient(stream, $"Received your message: {ClientDataTaskReaders[index].Result}");
                     }
-                    task = ReceiveMessageFromClientAsync(stream);
+                    ClientDataTaskReaders[index] = ReceiveMessageFromClientAsync(stream);
                 }
             }
             else
             {
-                task = ReceiveMessageFromClientAsync(stream);
+                ClientDataTaskReaders[index] = ReceiveMessageFromClientAsync(stream);
             }
         //}
         //catch (AggregateException e)
@@ -114,10 +114,9 @@ public class Server
                 // Server will throw exception if a closed connection (from the client) isn't closed on the server.
                 // Use this for checking if a client is still connected:
                 // https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.socket.connected?view=net-8.0
-
                 for (int i = 0; i < ClientDataTaskReaders.Count; i++)
                 {
-                    ReadDataFromClient(stream, ClientDataTaskReaders[i]);
+                    ReadDataFromClient(stream, i);
                 }
             }
         }
