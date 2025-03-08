@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using TCP_Server.Interfaces;
 
 namespace TCP_Server;
 
@@ -12,11 +13,13 @@ public class Server
     public int Port { get; private set; }
     private TcpListener Listener { get; set; }
     private Task<TcpClient>? TaskClientConnecter { get; set; }
-    private List<Task<string?>> ClientDataTaskReaders { get; set; } = [];
+    private List<Task<string?>> ClientDataTaskReaders { get; } = [];
 
     // All client connections for sending/receiving.
     // Clients remain even if connection is closed.
-    private Dictionary<TcpClient, NetworkStream> ClientStreams { get; set; } = [];
+    private Dictionary<TcpClient, NetworkStream> ClientStreams { get; } = [];
+
+    private readonly IProtocol protocol;
 
     public Server(int port, int maxConnections)
     {
