@@ -12,7 +12,7 @@ public abstract class Protocol
     public Command CommandFunc { get; protected set; }
 
     public abstract void SelectCommand(string command);
-    public abstract bool ExecuteCommand(int value1, int value2);
+    public abstract int ExecuteCommand(int value1, int value2);
 
     protected static string[] GetCommandNames(Enum @enum)
     {

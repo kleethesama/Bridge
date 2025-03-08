@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Net.Sockets;
 using TCP_Server.Base_classes;
+using TCP_Server.Exceptions;
 
 namespace TCP_Server;
 
@@ -49,15 +50,14 @@ public class SimpleProtocol : Protocol
         }
     }
 
-    public override bool ExecuteCommand(int value1, int value2)
+    public override int ExecuteCommand(int value1, int value2)
     {
         if (CommandFunc is null)
         {
-            Console.WriteLine("No command has been selected. Please, select a command."); // Send this to client.
-            return false;
+            throw new CommandNotSelectedException("No command has been selected. " +
+                "Please, select a command before executing.");
         }
-        CommandFunc(value1, value2);
-        return true;
+        return CommandFunc(value1, value2);
     }
 
     private static int Random(int minValue, int maxValue)
