@@ -1,25 +1,22 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using TCP_Server.Base_classes;
 
 namespace TCP_Server;
 
 public class Server
 {
-    public bool Running { get; private set; } = false;
-    public int MaxConnections { get; private set; }
+    public bool Running { get; protected set; } = false;
+    public int MaxConnections { get; protected set; }
 
-    public IPAddress IPAddress { get; private set; }
-    public int Port { get; private set; }
-    private TcpListener Listener { get; set; }
-    private Task<TcpClient>? TaskClientConnecter { get; set; }
-    private List<Task<string?>> ClientDataTaskReaders { get; } = [];
+    public IPAddress IPAddress { get; protected set; }
+    public int Port { get; protected set; }
+    protected TcpListener Listener { get; set; }
+    protected Task<TcpClient>? TaskClientConnecter { get; set; }
+    protected List<Task<string?>> ClientDataTaskReaders { get; } = [];
 
     // All client connections for sending/receiving.
     // Clients remain even if connection is closed.
-    private Dictionary<TcpClient, NetworkStream> ClientStreams { get; } = [];
-
-    private readonly Protocol _protocol;
+    protected Dictionary<TcpClient, NetworkStream> ClientStreams { get; } = [];
 
     public Server(int port, int maxConnections)
     {
@@ -61,7 +58,7 @@ public class Server
         Listener.Stop();
     }
 
-    private void ListenForNewClient()
+    protected void ListenForNewClient()
     {
         if (TaskClientConnecter.IsCompleted && ClientStreams.Count < MaxConnections)
         {
@@ -79,7 +76,7 @@ public class Server
         }
     }
 
-    private void ReadDataFromClient(NetworkStream stream, int index)
+    protected void ReadDataFromClient(NetworkStream stream, int index)
     {
         //try
         //{
@@ -108,7 +105,7 @@ public class Server
         //}
     }
 
-    private void HandleAllCurrentClients()
+    protected void HandleAllCurrentClients()
     {
         foreach (var stream in ClientStreams.Values)
         {
@@ -130,14 +127,14 @@ public class Server
         MaxConnections = maxConnections;
     }
 
-    private static string? GetClientIPAddress(NetworkStream stream)
+    protected static string? GetClientIPAddress(NetworkStream stream)
     {
         // Source: https://stackoverflow.com/questions/60953041/tcplistener-tcpclient-get-ipaddress
         var remoteIpEndPoint = stream.Socket.RemoteEndPoint as IPEndPoint;
         return remoteIpEndPoint?.Address.ToString();
     }
 
-    private static async Task<string?> ReceiveMessageFromClientAsync(NetworkStream stream)
+    protected static async Task<string?> ReceiveMessageFromClientAsync(NetworkStream stream)
     {
         var reader = new StreamReader(stream); // Disposing will close connection with client.
         var line = await reader.ReadLineAsync();

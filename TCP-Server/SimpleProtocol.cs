@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Net.Sockets;
 using TCP_Server.Base_classes;
 using TCP_Server.Exceptions;
 
@@ -7,16 +6,21 @@ namespace TCP_Server;
 
 public class SimpleProtocol : Protocol
 {
-    private enum CommandType : int
+    public enum CommandType : int
     {
         Random,
         Add,
         Subtract
     }
 
-    public SimpleProtocol(TcpClient client)
+    public SimpleProtocol(CommandType commandType)
     {
-        Client = client;
+        SelectCommand(commandType);
+    }
+
+    public SimpleProtocol(string command)
+    {
+        SelectCommand(command);
     }
 
     private static CommandType ParseCommandType(string command)
@@ -30,6 +34,24 @@ public class SimpleProtocol : Protocol
                 nameof(command));
         }
         return (CommandType)commandIndex;
+    }
+
+    public void SelectCommand(CommandType commandType)
+    {
+        switch (commandType)
+        {
+            case CommandType.Random:
+                CommandFunc = Random;
+                break;
+
+            case CommandType.Add:
+                CommandFunc = Add;
+                break;
+
+            case CommandType.Subtract:
+                CommandFunc = Subtract;
+                break;
+        }
     }
 
     public override void SelectCommand(string command)

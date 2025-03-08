@@ -1,15 +1,15 @@
 ﻿using System.Collections.Immutable;
-using System.Net.Sockets;
 
 namespace TCP_Server.Base_classes;
 
 public abstract class Protocol
 {
-    protected TcpClient Client { get; set; }
     public bool CommandReceived { get; protected set; } = false;
     public byte AllowedArgsCount { get; protected set; }
     public delegate int Command(int value1, int value2);
+    #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public Command CommandFunc { get; protected set; }
+    #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
     public abstract void SelectCommand(string command);
     public abstract int ExecuteCommand(int value1, int value2);
