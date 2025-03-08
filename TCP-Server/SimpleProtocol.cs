@@ -1,60 +1,77 @@
-﻿using System.Net.Sockets;
+﻿using System.Collections.Immutable;
+using System.Net.Sockets;
 using TCP_Server.Base_classes;
 
 namespace TCP_Server;
 
 public class SimpleProtocol : Protocol
 {
-    public Command CommandFunc { get; private set; }
+    private enum CommandType : int
+    {
+        Random,
+        Add,
+        Subtract
+    }
 
     public SimpleProtocol(TcpClient client)
     {
         Client = client;
-        ValidCommands = ["Random", "Add", "Subtract"];
+    }
+
+    private static CommandType ParseCommandType(string command)
+    {
+        ImmutableList<string> list = Enum.GetNames(typeof(CommandType)).ToImmutableList();
+        int commandIndex = list.FindIndex(
+            e => String.Compare(command, e, StringComparison.OrdinalIgnoreCase) == 0);
+        if (commandIndex == -1)
+        {
+            throw new ArgumentException("Could not find the given command type.",
+                nameof(command));
+        }
+        return (CommandType)commandIndex;
     }
 
     public override void SelectCommand(string command)
     {
-        if (!IsValidCommand(command))
+        switch (ParseCommandType(command))
         {
-            throw new ArgumentException($"The given command: {command}\nis not valid.", nameof(command));
-        }
-        switch (GetCommandIndex(command)) // Maybe an enum would be better?
-        {
-            case 0:
+            case CommandType.Random:
                 CommandFunc = Random;
                 break;
 
-            case 1:
+            case CommandType.Add:
                 CommandFunc = Add;
                 break;
 
-            case 2:
+            case CommandType.Subtract:
                 CommandFunc = Subtract;
                 break;
         }
     }
 
-    public override void ExecuteCommand()
+    public override bool ExecuteCommand(int value1, int value2)
     {
         if (CommandFunc is null)
         {
-
+            Console.WriteLine("No command has been selected. Please, select a command."); // Send this to client.
+            return false;
         }
+        CommandFunc(value1, value2);
+        return true;
     }
 
-    public static int Random(int minValue, int maxValue)
+    private static int Random(int minValue, int maxValue)
     {
         var randomizer = new Random();
         return randomizer.Next(minValue, maxValue);
     }
 
-    public static int Add(int value1, int value2)
+    private static int Add(int value1, int value2)
     {
         return value1 + value2;
     }
 
-    public static int Subtract(int value1, int value2)
+    private static int Subtract(int value1, int value2)
     {
         return value1 - value2;
     }

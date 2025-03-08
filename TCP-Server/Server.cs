@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using TCP_Server.Interfaces;
+using TCP_Server.Base_classes;
 
 namespace TCP_Server;
 
@@ -19,7 +19,7 @@ public class Server
     // Clients remain even if connection is closed.
     private Dictionary<TcpClient, NetworkStream> ClientStreams { get; } = [];
 
-    private readonly IProtocol protocol;
+    private readonly Protocol _protocol;
 
     public Server(int port, int maxConnections)
     {

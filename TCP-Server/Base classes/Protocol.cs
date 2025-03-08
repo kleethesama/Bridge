@@ -7,18 +7,22 @@ public abstract class Protocol
 {
     protected TcpClient Client { get; set; }
     public bool CommandReceived { get; protected set; } = false;
-    public string[] ValidCommands { get; protected set; }
     public byte AllowedArgsCount { get; protected set; }
     public delegate int Command(int value1, int value2);
+    public Command CommandFunc { get; protected set; }
 
     public abstract void SelectCommand(string command);
+    public abstract bool ExecuteCommand(int value1, int value2);
 
-    public abstract void ExecuteCommand();
+    protected static string[] GetCommandNames(Enum @enum)
+    {
+        return Enum.GetNames(@enum.GetType());
+    }
 
-    public bool IsValidCommand(string command)
+    protected static bool IsValidCommand(string command, Enum @enum)
     {
         if (string.IsNullOrEmpty(command)) { return false; }
-        foreach (var cmd in ValidCommands)
+        foreach (var cmd in GetCommandNames(@enum))
         {
             if (String.Compare(command, cmd, StringComparison.OrdinalIgnoreCase) == 0)
             {
@@ -28,9 +32,9 @@ public abstract class Protocol
         return false;
     }
 
-    protected int GetCommandIndex(string command)
+    protected static int GetCommandIndex(string command, Enum @enum)
     {
-        ImmutableList<string> list = ValidCommands.ToImmutableList();
+        ImmutableList<string> list = GetCommandNames(@enum).ToImmutableList();
         int commandIndex = list.FindIndex(
             e => String.Compare(command, e, StringComparison.OrdinalIgnoreCase) == 0);
         if (commandIndex == -1)
@@ -41,7 +45,7 @@ public abstract class Protocol
         return commandIndex;
     }
 
-    public static int ParseDataArgument(string data, int index)
+    protected static int ParseDataArgument(string data, int index)
     {
         ArgumentNullException.ThrowIfNull(data, nameof(data));
         var rosChar = new ReadOnlySpan<char>(data[index]);
@@ -53,7 +57,7 @@ public abstract class Protocol
         throw new ArgumentException("Could not parse the client's argument", nameof(data));
     }
 
-    public int[] ParseAllDataArguments(string data)
+    protected int[] ParseAllDataArguments(string data)
     {
         ArgumentNullException.ThrowIfNull(data, nameof(data));
         string dataNoWhiteSpace = data.Trim();
