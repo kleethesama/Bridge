@@ -6,7 +6,7 @@ namespace TCP_Server;
 
 public class SimpleProtocol : Protocol
 {
-    public enum CommandType : int
+    public enum CommandType : ushort
     {
         Random,
         Add,
@@ -30,7 +30,7 @@ public class SimpleProtocol : Protocol
         SelectCommand(command);
     }
 
-    protected override int ParseCommandType(string command)
+    protected override ushort ParseCommandType(string command)
     {
         ImmutableList<string> list = Enum.GetNames(typeof(CommandType)).ToImmutableList();
         int commandIndex = list.FindIndex(
@@ -40,7 +40,7 @@ public class SimpleProtocol : Protocol
             throw new ArgumentException("Could not find the given command type.",
                 nameof(command));
         }
-        return commandIndex;
+        return (ushort)commandIndex;
     }
 
     public void SelectCommand(CommandType commandType)
