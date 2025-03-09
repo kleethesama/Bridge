@@ -4,7 +4,7 @@ using TCP_Server.Exceptions;
 
 namespace TCP_Server;
 
-public class SimpleProtocol : Protocol
+public class SimpleProtocol : TextBasedArgumentProtocol
 {
     public enum CommandType : ushort
     {
