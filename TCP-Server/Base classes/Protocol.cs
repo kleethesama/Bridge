@@ -1,77 +1,85 @@
-﻿using System.Collections.Immutable;
-
-namespace TCP_Server.Base_classes;
+﻿namespace TCP_Server.Base_classes;
 
 public abstract class Protocol
 {
     public bool CommandReceived { get; protected set; } = false;
-    public byte AllowedArgsCount { get; protected set; }
+    public byte ExpectedArgsCount { get; protected set; }
     public delegate int Command(int value1, int value2);
     #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public Command CommandFunc { get; protected set; }
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
+    protected abstract int ParseCommandType(string command);
     public abstract void SelectCommand(string command);
     public abstract int ExecuteCommand(int value1, int value2);
 
-    protected static string[] GetCommandNames(Enum @enum)
-    {
-        return Enum.GetNames(@enum.GetType());
-    }
-
-    protected static bool IsValidCommand(string command, Enum @enum)
-    {
-        if (string.IsNullOrEmpty(command)) { return false; }
-        foreach (var cmd in GetCommandNames(@enum))
-        {
-            if (String.Compare(command, cmd, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected static int GetCommandIndex(string command, Enum @enum)
-    {
-        ImmutableList<string> list = GetCommandNames(@enum).ToImmutableList();
-        int commandIndex = list.FindIndex(
-            e => String.Compare(command, e, StringComparison.OrdinalIgnoreCase) == 0);
-        if (commandIndex == -1)
-        {
-            throw new ArgumentException("Could not find the given command in the ValidCommands array.",
-                nameof(command));
-        }
-        return commandIndex;
-    }
-
-    protected static int ParseDataArgument(string data, int index)
+    protected int[] FindArgumentSeperationPositions(string data)
     {
         ArgumentNullException.ThrowIfNull(data, nameof(data));
-        var rosChar = new ReadOnlySpan<char>(data[index]);
-        var succesfulParse = int.TryParse(rosChar, out int result);
+        var argPoses = new int[ExpectedArgsCount];
+        argPoses[0] = 0;
+        int argCounter = 1;
+        for (int i = 0; i < data.Length; i++)
+        {
+            if (data[i] == ' ')
+            {
+                try
+                {
+                    argPoses[argCounter++] = i + 1;
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    throw new ArgumentException($"Expected {ExpectedArgsCount} arguments. " +
+                        $"{argCounter} or more were given.", nameof(data), e);
+                }
+            }
+        }
+        if (argCounter != ExpectedArgsCount)
+        {
+            throw new ArgumentException($"Expected {ExpectedArgsCount} arguments. " +
+                $"Only {argCounter} were given.", nameof(data));
+        }
+        return argPoses;
+    }
+
+    protected string[] SeperateArgumentsIntoArray(string data)
+    {
+        var args = new string[ExpectedArgsCount];
+        var argPoses = FindArgumentSeperationPositions(data);
+        for (int i = 0; i < ExpectedArgsCount; i++)
+        {
+            if (ExpectedArgsCount - 1 != i)
+            {
+                args[i] = data.Substring(argPoses[i], argPoses[i + 1] - 1);
+            }
+            else
+            {
+                args[i] = data.Substring(argPoses[i], data.Length - argPoses[i]);
+            }
+        }
+        return args;
+    }
+
+    protected static int ParseDataArgument(string arg)
+    {
+        ArgumentNullException.ThrowIfNull(arg, nameof(arg));
+        bool succesfulParse = int.TryParse(arg, out int result);
         if (succesfulParse)
         {
             return result;
         }
-        throw new ArgumentException("Could not parse the client's argument", nameof(data));
+        throw new ArgumentException("Could not parse the client's argument", nameof(arg));
     }
 
     protected int[] ParseAllDataArguments(string data)
     {
         ArgumentNullException.ThrowIfNull(data, nameof(data));
-        string dataNoWhiteSpace = data.Trim();
-        int argCount = dataNoWhiteSpace.Length;
-        if (argCount > AllowedArgsCount)
+        var args = SeperateArgumentsIntoArray(data);
+        var parsedArgs = new int[args.Length];
+        for (int i = 0; i < parsedArgs.Length; i++)
         {
-            throw new ArgumentOutOfRangeException(nameof(data),
-                $"There must not be more than {AllowedArgsCount} arguments given.");
+            parsedArgs[i] = ParseDataArgument(args[i]);
         }
-        var args = new int[argCount];
-        for (int i = 0; i < argCount; i++)
-        {
-            args[i] = ParseDataArgument(data, i);
-        }
-        return args;
+        return parsedArgs;
     }
 }

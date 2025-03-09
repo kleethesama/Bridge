@@ -13,17 +13,24 @@ public class SimpleProtocol : Protocol
         Subtract
     }
 
-    public SimpleProtocol(CommandType commandType)
+    public SimpleProtocol(byte expectedArgsCount)
     {
+        ExpectedArgsCount = expectedArgsCount;
+    }
+
+    public SimpleProtocol(CommandType commandType, byte expectedArgsCount)
+    {
+        ExpectedArgsCount = expectedArgsCount;
         SelectCommand(commandType);
     }
 
-    public SimpleProtocol(string command)
+    public SimpleProtocol(string command, byte expectedArgsCount)
     {
+        ExpectedArgsCount = expectedArgsCount;
         SelectCommand(command);
     }
 
-    private static CommandType ParseCommandType(string command)
+    protected override int ParseCommandType(string command)
     {
         ImmutableList<string> list = Enum.GetNames(typeof(CommandType)).ToImmutableList();
         int commandIndex = list.FindIndex(
@@ -33,7 +40,7 @@ public class SimpleProtocol : Protocol
             throw new ArgumentException("Could not find the given command type.",
                 nameof(command));
         }
-        return (CommandType)commandIndex;
+        return commandIndex;
     }
 
     public void SelectCommand(CommandType commandType)
@@ -56,7 +63,7 @@ public class SimpleProtocol : Protocol
 
     public override void SelectCommand(string command)
     {
-        switch (ParseCommandType(command))
+        switch ((CommandType)ParseCommandType(command))
         {
             case CommandType.Random:
                 CommandFunc = Random;
@@ -85,7 +92,7 @@ public class SimpleProtocol : Protocol
     private static int Random(int minValue, int maxValue)
     {
         var randomizer = new Random();
-        return randomizer.Next(minValue, maxValue);
+        return randomizer.Next(minValue, maxValue + 1); // +1 to include maxValue in range.
     }
 
     private static int Add(int value1, int value2)

@@ -7,7 +7,6 @@ public class Server
 {
     public bool Running { get; protected set; } = false;
     public int MaxConnections { get; protected set; }
-
     public IPAddress IPAddress { get; protected set; }
     public int Port { get; protected set; }
     protected TcpListener Listener { get; set; }
