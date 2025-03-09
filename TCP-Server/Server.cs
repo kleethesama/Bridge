@@ -12,11 +12,11 @@ public class Server
     public int Port { get; protected set; }
     protected TcpListener Listener { get; set; }
     protected Task<TcpClient>? TaskClientConnecter { get; set; }
-    protected List<Task<string?>> ClientDataTaskReaders { get; } = [];
+    protected Dictionary<TcpClient, Task<string?>> ClientDataTaskReaders { get; } = [];
 
     // All client connections for sending/receiving.
     // Clients remain even if connection is closed.
-    protected Dictionary<TcpClient, NetworkStream> ClientStreams { get; } = [];
+    public Dictionary<TcpClient, string> ReceivedClientData { get; protected set; } = [];
 
     public Server(int port, int maxConnections)
     {
@@ -48,75 +48,74 @@ public class Server
             ListenForNewClient();
             HandleAllCurrentClients();
         }
+
         // If the loop somehow breaks, the server is no longer running.
-        Stop();
+        StopListening();
     }
 
-    public void Stop()
+    public void StopListening()
     {
         Running = false;
         Listener.Stop();
     }
 
+    public void ReleaseAll()
+    {
+        foreach (var client in ReceivedClientData)
+        {
+            client.Key.Close();
+        }
+        ReceivedClientData = [];
+    }
+
     protected void ListenForNewClient()
     {
-        if (TaskClientConnecter.IsCompleted && ClientStreams.Count < MaxConnections)
+        if (TaskClientConnecter.IsCompleted && ReceivedClientData.Count < MaxConnections)
         {
             var newClient = TaskClientConnecter.Result;
-            if (!ClientStreams.ContainsKey(newClient))
+            if (ReceivedClientData.TryAdd(newClient, string.Empty))
             {
                 var newClientStream = newClient.GetStream();
-                ClientStreams.Add(newClient, newClientStream);
-                ClientDataTaskReaders.Add(ReceiveMessageFromClientAsync(newClientStream));
+                ClientDataTaskReaders.Add(newClient, ReceiveMessageFromClientAsync(newClientStream));
                 Console.WriteLine($"Added Client - IP Address is: {GetClientIPAddress(newClientStream)}" +
-                    $"\nCurrent amount of clients: {ClientStreams.Count}");
+                    $"\nCurrent amount of clients: {ReceivedClientData.Count}");
             }
             TaskClientConnecter = Listener.AcceptTcpClientAsync();
             Console.WriteLine("Listening for another new client...");
         }
     }
 
-    protected void ReadDataFromClient(NetworkStream stream, int index)
+    protected void ReadDataFromClient(TcpClient client)
     {
-        //try
-        //{
-            if (ClientDataTaskReaders[index] != null)
+        if (ClientDataTaskReaders[client] != null)
+        {
+            if (ClientDataTaskReaders[client].IsCompleted)
             {
-                if (ClientDataTaskReaders[index].IsCompletedSuccessfully)
+                if (!String.IsNullOrEmpty(ClientDataTaskReaders[client].Result))
                 {
-                    if (!String.IsNullOrEmpty(ClientDataTaskReaders[index].Result))
-                    {
-                        SendMessageToClient(stream, $"Received your message: {ClientDataTaskReaders[index].Result}");
-                    }
-                    ClientDataTaskReaders[index] = ReceiveMessageFromClientAsync(stream);
+                    ReceivedClientData[client] = ClientDataTaskReaders[client].Result;
                 }
+                ClientDataTaskReaders[client] = ReceiveMessageFromClientAsync(client.GetStream());
             }
-            else
-            {
-                ClientDataTaskReaders[index] = ReceiveMessageFromClientAsync(stream);
-            }
-        //}
-        //catch (AggregateException e)
-        //{
-        //    if (e.InnerException != null)
-        //    {
-
-        //    }
-        //}
+        }
+        else
+        {
+            ClientDataTaskReaders[client] = ReceiveMessageFromClientAsync(client.GetStream());
+        }
     }
 
     protected void HandleAllCurrentClients()
     {
-        foreach (var stream in ClientStreams.Values)
+        foreach (var client in ReceivedClientData.Keys)
         {
-            if (stream.Socket.Connected)
+            if (client.GetStream().Socket.Connected)
             {
                 // Server will throw exception if a closed connection (from the client) isn't closed on the server.
                 // Use this for checking if a client is still connected:
                 // https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.socket.connected?view=net-8.0
                 for (int i = 0; i < ClientDataTaskReaders.Count; i++)
                 {
-                    ReadDataFromClient(stream, i);
+                    ReadDataFromClient(client);
                 }
             }
         }

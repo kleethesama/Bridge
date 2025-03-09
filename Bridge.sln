@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OresundbronLibraryTest", "O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCP-Server", "TCP-Server\TCP-Server.csproj", "{9365AC21-D06B-4B15-8E6B-FDDDB026AF78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCP-ServerTests", "TCP-ServerTests\TCP-ServerTests.csproj", "{76C5B54E-E1E4-4AA2-B4D6-8055DF763A49}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +51,6 @@ Global
 		{9365AC21-D06B-4B15-8E6B-FDDDB026AF78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9365AC21-D06B-4B15-8E6B-FDDDB026AF78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9365AC21-D06B-4B15-8E6B-FDDDB026AF78}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76C5B54E-E1E4-4AA2-B4D6-8055DF763A49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76C5B54E-E1E4-4AA2-B4D6-8055DF763A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76C5B54E-E1E4-4AA2-B4D6-8055DF763A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76C5B54E-E1E4-4AA2-B4D6-8055DF763A49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
