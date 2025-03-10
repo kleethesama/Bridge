@@ -1,11 +1,12 @@
 ﻿using System.Collections.Immutable;
 using TCP_Server.Base_classes;
-using TCP_Server.Exceptions;
 
 namespace TCP_Server;
 
 public class SimpleProtocol : TextBasedArgumentProtocol
 {
+    public Task<string?> ProtocolTask { get; private set; }
+
     public enum CommandType : short
     {
         Random,
@@ -13,35 +14,62 @@ public class SimpleProtocol : TextBasedArgumentProtocol
         Subtract
     }
 
-    public SimpleProtocol(byte expectedArgsCount)
-    {
-        ExpectedArgsCount = expectedArgsCount;
-    }
+    //public SimpleProtocol(byte expectedArgsCount)
+    //{
+    //    ExpectedArgsCount = expectedArgsCount;
+    //}
 
-    public SimpleProtocol(CommandType commandType, byte expectedArgsCount)
-    {
-        ExpectedArgsCount = expectedArgsCount;
-        SelectCommand(commandType);
-    }
+    //public SimpleProtocol(CommandType commandType, byte expectedArgsCount)
+    //{
+    //    ExpectedArgsCount = expectedArgsCount;
+    //}
 
     public SimpleProtocol(string command, byte expectedArgsCount)
     {
         ExpectedArgsCount = expectedArgsCount;
-        SelectCommand(command);
+        ProtocolTask = RunProtocol(command);
     }
 
-    protected static bool CheckIfCommandReceived(short command)
+    public async Task<string?> RunProtocol(string command)
     {
-        return command != -1;
+        // Parse command from server.
+        short commandType = ParseCommandType(command, typeof(CommandType));
+        if (!IsCommandValid(commandType)) { return null; }
+        var newCommand = (CommandType)commandType;
+        SelectCommand(newCommand);
+
+        // Await args from server.
+        _ = await WaitForServerMessage();
+
+        // Handle args and perform command execution.
+        string[] args = SeperateArgumentsIntoArray(CurrentServerMessage);
+        int[] argValues = ParseAllData(args);
+        int executionValue = ExecuteCommand(argValues[0], argValues[1]);
+
+        // Return value to server.
+        return executionValue.ToString();
     }
 
-    protected override short ParseCommandType(string command)
+    private async Task<bool> WaitForServerMessage()
     {
-        ImmutableList<string> list = Enum.GetNames(typeof(CommandType)).ToImmutableList();
+        while (CurrentServerMessage is null)
+        {
+            await Task.Yield();
+        }
+        return true;
+    }
+
+    private static bool IsCommandValid(short commandType)
+    {
+        return commandType != -1;
+    }
+
+    protected override short ParseCommandType(string command, Type enumType)
+    {
+        ImmutableList<string> list = Enum.GetNames(enumType).ToImmutableList();
         int commandIndex = list.FindIndex(
             e => String.Compare(command, e, StringComparison.OrdinalIgnoreCase) == 0);
         short commandNumber = (short)commandIndex;
-        CommandReceived = CheckIfCommandReceived(commandNumber);
         return commandNumber;
     }
 
@@ -63,31 +91,8 @@ public class SimpleProtocol : TextBasedArgumentProtocol
         }
     }
 
-    public override void SelectCommand(string command)
-    {
-        switch ((CommandType)ParseCommandType(command))
-        {
-            case CommandType.Random:
-                CommandFunc = Random;
-                break;
-
-            case CommandType.Add:
-                CommandFunc = Add;
-                break;
-
-            case CommandType.Subtract:
-                CommandFunc = Subtract;
-                break;
-        }
-    }
-
     public override int ExecuteCommand(int value1, int value2)
     {
-        if (CommandFunc is null)
-        {
-            throw new CommandNotSelectedException("No command has been selected. " +
-                "Please, select a command before executing.");
-        }
         return CommandFunc(value1, value2);
     }
 

@@ -4,18 +4,12 @@ namespace TCP_Server;
 
 public class ServerWithProtocol : Server
 {
-    private readonly SimpleProtocol _protocol;
+    private readonly Dictionary<TcpClient, SimpleProtocol> _clientProtocols = [];
     private Task? _mainLoopTask;
 
-    public ServerWithProtocol(int port, int maxConnections, SimpleProtocol protocol) : base(port, maxConnections)
-    {
-        _protocol = protocol;
-    }
+    public ServerWithProtocol(int port, int maxConnections) : base(port, maxConnections) { }
 
-    public ServerWithProtocol(string host, int port, int maxConnections, SimpleProtocol protocol) : base (host, port, maxConnections)
-    {
-        _protocol = protocol;
-    }
+    public ServerWithProtocol(string host, int port, int maxConnections) : base (host, port, maxConnections) { }
 
     public void Run()
     {
@@ -41,19 +35,36 @@ public class ServerWithProtocol : Server
             }
             lock (ReceivedClientData)
             {
-                //var receivedClientDataCopy = ReceivedClientData.ToDictionary(
-                //entry => entry.Key, entry => entry.Value);
                 foreach (var kvp in ReceivedClientData)
                 {
                     if (!string.IsNullOrEmpty(kvp.Value))
                     {
-                        _protocol.SelectCommand(kvp.Value);
-                        if (_protocol.CommandReceived)
+                        //_protocol.SelectCommand(kvp.Value);
+                        //if (_protocol.CommandReceived)
+                        //{
+                        //    Console.WriteLine($"Command received: {kvp.Value}");
+                        //}
+                        if (!_clientProtocols.ContainsKey(kvp.Key))
                         {
-                            Console.WriteLine($"Command received: {kvp.Value}");
+                            _clientProtocols.Add(kvp.Key, new SimpleProtocol(kvp.Value, 2));
+                        }
+                        else
+                        {
+                            _clientProtocols[kvp.Key].CurrentServerMessage = kvp.Value;
                         }
                         ReceivedClientData[kvp.Key] = string.Empty;
                     }
+                }
+            }
+            var _clientProtocolsCopy = _clientProtocols.ToDictionary(entry => entry.Key,
+                                                                     entry => entry.Value);
+            foreach (var clientProtocol in _clientProtocolsCopy)
+            {
+                if (clientProtocol.Value.ProtocolTask.IsCompleted)
+                {
+                    SendMessageToClient(clientProtocol.Key.GetStream(),
+                        clientProtocol.Value.ProtocolTask.Result);
+                    _clientProtocols.Remove(clientProtocol.Key);
                 }
             }
         }

@@ -2,6 +2,7 @@
 
 public abstract class TextBasedArgumentProtocol : Protocol
 {
+    public string? CurrentServerMessage { get; set; }
     public byte ExpectedArgsCount { get; protected set; }
 
     protected int[] FindArgumentSeperationPositions(string data)

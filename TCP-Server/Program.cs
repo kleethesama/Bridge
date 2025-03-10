@@ -16,8 +16,8 @@ internal class Program
         //    Console.WriteLine(position);
         //}
 
-        var myProtocol = new SimpleProtocol(2);
-        var myServer = new ServerWithProtocol(7, 3, myProtocol);
+        //var myProtocol = new SimpleProtocol(2);
+        var myServer = new ServerWithProtocol(7, 3);
         myServer.Run();
     }
 }
