@@ -4,8 +4,8 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        var data = "50245 512";
-        var protocol = new SimpleProtocol("ranDOM", 2);
+        //var data = "50245 512";
+        //var protocol = new SimpleProtocol("ranDOM", 2);
         //var result = protocol.ExecuteCommand(1, 2);
         //var argPoses = protocol.FindArgumentSeperationPositions(data);
         //var result = protocol.ParseAllDataArguments(data);
@@ -16,7 +16,8 @@ internal class Program
         //    Console.WriteLine(position);
         //}
 
-        //var myServer = new Server("127.0.0.1", 7, 3);
-        //myServer.Start();
+        var myProtocol = new SimpleProtocol(2);
+        var myServer = new ServerWithProtocol(7, 3, myProtocol);
+        myServer.Run();
     }
 }

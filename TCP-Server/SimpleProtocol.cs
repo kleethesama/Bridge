@@ -6,7 +6,7 @@ namespace TCP_Server;
 
 public class SimpleProtocol : TextBasedArgumentProtocol
 {
-    public enum CommandType : ushort
+    public enum CommandType : short
     {
         Random,
         Add,
@@ -30,17 +30,19 @@ public class SimpleProtocol : TextBasedArgumentProtocol
         SelectCommand(command);
     }
 
-    protected override ushort ParseCommandType(string command)
+    protected static bool CheckIfCommandReceived(short command)
+    {
+        return command != -1;
+    }
+
+    protected override short ParseCommandType(string command)
     {
         ImmutableList<string> list = Enum.GetNames(typeof(CommandType)).ToImmutableList();
         int commandIndex = list.FindIndex(
             e => String.Compare(command, e, StringComparison.OrdinalIgnoreCase) == 0);
-        if (commandIndex == -1)
-        {
-            throw new ArgumentException("Could not find the given command type.",
-                nameof(command));
-        }
-        return (ushort)commandIndex;
+        short commandNumber = (short)commandIndex;
+        CommandReceived = CheckIfCommandReceived(commandNumber);
+        return commandNumber;
     }
 
     public void SelectCommand(CommandType commandType)

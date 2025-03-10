@@ -8,7 +8,7 @@ public abstract class Protocol
     public Command CommandFunc { get; protected set; }
     #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-    protected abstract ushort ParseCommandType(string command);
+    protected abstract short ParseCommandType(string command);
     public abstract void SelectCommand(string command);
     public abstract int ExecuteCommand(int value1, int value2);
 

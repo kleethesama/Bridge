@@ -44,8 +44,11 @@ public class Server
         // Loop for server getting new clients, reading data from them and replying to them.
         while (Running)
         {
-            ListenForNewClient();
-            HandleAllCurrentClients();
+            lock (ReceivedClientData)
+            {
+                ListenForNewClient();
+                HandleAllCurrentClients();
+            }
         }
 
         // If the loop somehow breaks, the server is no longer running.
