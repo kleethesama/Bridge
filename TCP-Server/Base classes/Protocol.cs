@@ -10,27 +10,28 @@ public abstract class Protocol
 
     protected abstract short ParseCommandType(string command, Type type);
     //protected abstract void SelectCommand(string command);
-    public abstract int ExecuteCommand(int value1, int value2);
+    protected abstract int ExecuteCommand(int value1, int value2);
 
-    protected static int ParseDataArgument(string data)
+    protected static int ParseDataArgument(string data, out bool succesfulParse)
     {
         ArgumentNullException.ThrowIfNull(data, nameof(data));
-        bool succesfulParse = int.TryParse(data, out int result);
-        if (succesfulParse)
-        {
-            return result;
-        }
-        throw new ArgumentException("Could not parse the client's argument", nameof(data));
+        succesfulParse = int.TryParse(data, out int result);
+        return result;
     }
 
-    protected static int[] ParseAllData(string[] allData)
+    protected static int[] ParseAllData(string[] allData, out bool allParsingSucceeded)
     {
         ArgumentNullException.ThrowIfNull(allData, nameof(allData));
-        //var args = SeperateArgumentsIntoArray(args);
         var parsedArgs = new int[allData.Length];
+        allParsingSucceeded = true;
         for (int i = 0; i < parsedArgs.Length; i++)
         {
-            parsedArgs[i] = ParseDataArgument(allData[i]);
+            parsedArgs[i] = ParseDataArgument(allData[i], out allParsingSucceeded);
+            if (!allParsingSucceeded)
+            {
+                allParsingSucceeded = false;
+                break;
+            }
         }
         return parsedArgs;
     }

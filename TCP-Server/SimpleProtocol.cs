@@ -24,39 +24,71 @@ public class SimpleProtocol : TextBasedArgumentProtocol
     //    ExpectedArgsCount = expectedArgsCount;
     //}
 
-    public SimpleProtocol(string command, byte expectedArgsCount)
+    public SimpleProtocol()
     {
-        ExpectedArgsCount = expectedArgsCount;
+        ExpectedArgsCount = 2;
+        //ProtocolTask = RunProtocol(command);
+    }
+
+    public void StartProtocolRun(string command)
+    {
         ProtocolTask = RunProtocol(command);
     }
 
-    public async Task<string?> RunProtocol(string command)
+    public bool IsProtocolRunning()
+    {
+        if (ProtocolTask is null)
+        {
+            return false;
+        }
+        return ProtocolTask.Status == TaskStatus.Running;
+    }
+
+    private async Task<string?> RunProtocol(string command)
     {
         // Parse command from server.
         short commandType = ParseCommandType(command, typeof(CommandType));
-        if (!IsCommandValid(commandType)) { return null; }
+        if (!IsCommandValid(commandType))
+        {
+            return "Command is not valid.";
+        }
         var newCommand = (CommandType)commandType;
         SelectCommand(newCommand);
 
         // Await args from server.
-        _ = await WaitForServerMessage();
+        await WaitForServerMessage();
+        if (ArgsMessage is null)
+        {
+            return "Timeout. Waited too long for arguments to be receieved.";
+        }
 
         // Handle args and perform command execution.
-        string[] args = SeperateArgumentsIntoArray(CurrentServerMessage);
-        int[] argValues = ParseAllData(args);
-        int executionValue = ExecuteCommand(argValues[0], argValues[1]);
+        string[]? args = SeperateArgumentsIntoArray(ArgsMessage);
+        if (args is null)
+        {
+            return $"Expected {ExpectedArgsCount} arguments for the command {CommandFunc.Method.Name}.";
+        }
+        int[] argValues = ParseAllData(args, out bool IsDataParsedSuccesfully);
+        int executionValue;
+        if (IsDataParsedSuccesfully)
+        {
+            executionValue = ExecuteCommand(argValues[0], argValues[1]);
+        }
+        else
+        {
+            return $"These are not valid arguments: {ArgsMessage}";
+        }
 
         // Return value to server.
         return executionValue.ToString();
     }
 
-    private async Task<bool> WaitForServerMessage()
+    private async Task WaitForServerMessage()
     {
-        while (CurrentServerMessage is null)
+        while (ArgsMessage is null)
         {
             await Task.Yield();
         }
-        return true;
     }
 
     private static bool IsCommandValid(short commandType)
@@ -73,7 +105,7 @@ public class SimpleProtocol : TextBasedArgumentProtocol
         return commandNumber;
     }
 
-    public void SelectCommand(CommandType commandType)
+    private void SelectCommand(CommandType commandType)
     {
         switch (commandType)
         {
@@ -91,7 +123,7 @@ public class SimpleProtocol : TextBasedArgumentProtocol
         }
     }
 
-    public override int ExecuteCommand(int value1, int value2)
+    protected override int ExecuteCommand(int value1, int value2)
     {
         return CommandFunc(value1, value2);
     }

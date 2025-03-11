@@ -39,18 +39,15 @@ public class ServerWithProtocol : Server
                 {
                     if (!string.IsNullOrEmpty(kvp.Value))
                     {
-                        //_protocol.SelectCommand(kvp.Value);
-                        //if (_protocol.CommandReceived)
-                        //{
-                        //    Console.WriteLine($"Command received: {kvp.Value}");
-                        //}
                         if (!_clientProtocols.ContainsKey(kvp.Key))
                         {
-                            _clientProtocols.Add(kvp.Key, new SimpleProtocol(kvp.Value, 2));
+                            var newProtocol = new SimpleProtocol();
+                            newProtocol.StartProtocolRun(kvp.Value);
+                            _clientProtocols.Add(kvp.Key, newProtocol);
                         }
                         else
                         {
-                            _clientProtocols[kvp.Key].CurrentServerMessage = kvp.Value;
+                            _clientProtocols[kvp.Key].ArgsMessage = kvp.Value;
                         }
                         ReceivedClientData[kvp.Key] = string.Empty;
                     }

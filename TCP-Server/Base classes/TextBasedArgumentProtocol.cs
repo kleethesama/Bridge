@@ -2,10 +2,10 @@
 
 public abstract class TextBasedArgumentProtocol : Protocol
 {
-    public string? CurrentServerMessage { get; set; }
+    public string? ArgsMessage { get; set; }
     public byte ExpectedArgsCount { get; protected set; }
 
-    protected int[] FindArgumentSeperationPositions(string data)
+    protected int[]? FindArgumentSeperationPositions(string data)
     {
         ArgumentNullException.ThrowIfNull(data, nameof(data));
         var argPoses = new int[ExpectedArgsCount];
@@ -19,25 +19,27 @@ public abstract class TextBasedArgumentProtocol : Protocol
                 {
                     argPoses[argCounter++] = i + 1;
                 }
-                catch (IndexOutOfRangeException e)
+                catch (IndexOutOfRangeException)
                 {
-                    throw new ArgumentException($"Expected {ExpectedArgsCount} arguments. " +
-                        $"{argCounter} or more were given.", nameof(data), e);
+                    return null;
                 }
             }
         }
         if (argCounter != ExpectedArgsCount)
         {
-            throw new ArgumentException($"Expected {ExpectedArgsCount} arguments. " +
-                $"Only {argCounter} were given.", nameof(data));
+            return null;
         }
         return argPoses;
     }
 
-    protected string[] SeperateArgumentsIntoArray(string data)
+    protected string[]? SeperateArgumentsIntoArray(string data)
     {
         var args = new string[ExpectedArgsCount];
         var argPoses = FindArgumentSeperationPositions(data);
+        if (argPoses is null)
+        {
+            return null;
+        }
         for (int i = 0; i < ExpectedArgsCount; i++)
         {
             if (ExpectedArgsCount - 1 != i)
