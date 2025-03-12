@@ -7,17 +7,19 @@ namespace TCP_Server;
 public class SimpleJSONProtocol : SimpleProtocol
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions;
-    public ProtocolCommand? ProtocolCommand { get; private set; }
+    public JsonProtocolObj? ProtocolCommand { get; private set; }
 
     public SimpleJSONProtocol(byte expectedArgsCount) : base(expectedArgsCount)
     {
         _jsonSerializerOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web)
         {
             PropertyNameCaseInsensitive = true,
-            UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow
+            UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow // Ensuring errors in format are not allowed.
         };
     }
 
+    // The main thread for running the protocol.
+    // Returns the message to be sent back to client.
     protected override async Task<string> RunProtocol(string jsonString)
     {
         return await Task.Run(() =>
@@ -48,8 +50,8 @@ public class SimpleJSONProtocol : SimpleProtocol
         });
     }
 
-    private ProtocolCommand? DeserializeToCommandObject(string jsonString)
+    private JsonProtocolObj? DeserializeToCommandObject(string jsonString)
     {
-        return JsonSerializer.Deserialize<ProtocolCommand>(jsonString, _jsonSerializerOptions);
+        return JsonSerializer.Deserialize<JsonProtocolObj>(jsonString, _jsonSerializerOptions);
     }
 }

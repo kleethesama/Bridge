@@ -19,6 +19,8 @@ public class SimpleProtocol : Protocol
         ExpectedArgsCount = expectedArgsCount;
     }
 
+    // The main thread for running the protocol.
+    // Returns the message to be sent back to client.
     protected override async Task<string> RunProtocol(string command)
     {
         // Parse command from server.
@@ -39,7 +41,7 @@ public class SimpleProtocol : Protocol
         {
             return $"Expected {ExpectedArgsCount} arguments for the command {CommandFunc.Method.Name}.";
         }
-        int[] argValues = ParseAllData(args, out bool IsDataParsedSuccesfully);
+        int[] argValues = ParseAllArguments(args, out bool IsDataParsedSuccesfully);
         int executionValue;
         if (IsDataParsedSuccesfully)
         {
@@ -65,6 +67,11 @@ public class SimpleProtocol : Protocol
         };
     }
 
+    // Used for waiting in the running protocol loop,
+    // like when expecting arguments from the client.
+    // For example, this can be used to wait when 
+    // the protocol got a command and then is waiting for
+    // numbers to use for command execution.
     public class ServerMessageWaiter
     {
         private readonly SimpleProtocol _masterInstance;

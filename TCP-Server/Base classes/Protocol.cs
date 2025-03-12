@@ -1,21 +1,25 @@
 ﻿using System.Collections.Immutable;
+using TCP_Server.Exceptions;
 
 namespace TCP_Server.Base_classes;
 
 public abstract class Protocol
 {
-    public delegate int Command(int value1, int value2);
-    public Command? CommandFunc { get; protected set; }
-    public string? ArgsMessage { get; set; }
+    public delegate int Command(int value1, int value2); // Having the parameter be an int[] might've been better.
+    public Command? CommandFunc { get; protected set; } // Used for picking a function to execute.
+    public string? ArgsMessage { get; set; } // Arguments received from server.
     public byte ExpectedArgsCount { get; protected set; }
-    public bool WaitingForArgs { get; set; } = false;
-    public Task<string>? ProtocolTask { get; protected set; }
+    public Task<string>? ProtocolTask { get; protected set; } // The thread object for running the protocol loop.
 
     protected abstract void SelectCommand(short commandType);
     protected abstract Task<string> RunProtocol(string command);
 
     protected int ExecuteCommand(int value1, int value2)
     {
+        if (CommandFunc is null)
+        {
+            throw new CommandNotSelectedException("A command was not selected before execution.");
+        }
         return CommandFunc(value1, value2);
     }
 
@@ -24,6 +28,7 @@ public abstract class Protocol
         ProtocolTask = RunProtocol(command);
     }
 
+    // Finds all whitespace indicies for a string that contains arguments.
     protected int[]? FindArgumentSeperationPositions(string data)
     {
         ArgumentNullException.ThrowIfNull(data, nameof(data));
@@ -40,6 +45,7 @@ public abstract class Protocol
                 }
                 catch (IndexOutOfRangeException)
                 {
+                    Console.WriteLine("There were an incorrect amount of arguments.");
                     return null;
                 }
             }
@@ -51,6 +57,7 @@ public abstract class Protocol
         return argPoses;
     }
 
+    // Puts all arguments from the arguments string into an array.
     protected string[]? SeperateArgumentsIntoArray(string data)
     {
         var args = new string[ExpectedArgsCount];
@@ -73,21 +80,21 @@ public abstract class Protocol
         return args;
     }
 
-    protected static int ParseDataArgument(string data, out bool succesfulParse)
+    protected static int ParseArgument(string arg, out bool succesfulParse)
     {
-        ArgumentNullException.ThrowIfNull(data, nameof(data));
-        succesfulParse = int.TryParse(data, out int result);
+        ArgumentNullException.ThrowIfNull(arg, nameof(arg));
+        succesfulParse = int.TryParse(arg, out int result);
         return result;
     }
 
-    protected static int[] ParseAllData(string[] allData, out bool allParsingSucceeded)
+    protected static int[] ParseAllArguments(string[] args, out bool allParsingSucceeded)
     {
-        ArgumentNullException.ThrowIfNull(allData, nameof(allData));
-        var parsedArgs = new int[allData.Length];
+        ArgumentNullException.ThrowIfNull(args, nameof(args));
+        var parsedArgs = new int[args.Length];
         allParsingSucceeded = true;
         for (int i = 0; i < parsedArgs.Length; i++)
         {
-            parsedArgs[i] = ParseDataArgument(allData[i], out allParsingSucceeded);
+            parsedArgs[i] = ParseArgument(args[i], out allParsingSucceeded);
             if (!allParsingSucceeded)
             {
                 allParsingSucceeded = false;

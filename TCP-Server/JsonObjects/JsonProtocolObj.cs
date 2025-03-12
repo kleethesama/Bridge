@@ -2,7 +2,7 @@
 
 namespace TCP_Server.JsonObjects;
 
-public class ProtocolCommand
+public class JsonProtocolObj
 {
     [JsonPropertyName("method")]
     public string? Method { get; set; }

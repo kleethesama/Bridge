@@ -51,7 +51,7 @@ public class Server
             }
         }
 
-        // If the loop somehow breaks, the server is no longer running.
+        // If the loop breaks, the server is no longer running.
         StopListening();
     }
 
@@ -63,25 +63,29 @@ public class Server
 
     public void ReleaseAll()
     {
-        foreach (var client in ReceivedClientData)
+        foreach (var kvp in ReceivedClientData)
         {
-            client.Key.Close();
+            kvp.Key.Close();
         }
         ReceivedClientData = [];
     }
 
     protected void ListenForNewClient()
     {
+        // Check if new client has connected
         if (TaskClientConnecter.IsCompleted && ReceivedClientData.Count < MaxConnections)
         {
             var newClient = TaskClientConnecter.Result;
+            // Add new client to dict.
             if (ReceivedClientData.TryAdd(newClient, string.Empty))
             {
                 var newClientStream = newClient.GetStream();
+                // Start continously checking client for new incoming message.
                 ClientDataTaskReaders.Add(newClient, ReceiveMessageFromClientAsync(newClientStream));
                 Console.WriteLine($"Added Client - IP Address is: {GetClientIPAddress(newClientStream)}" +
                     $"\nCurrent amount of clients: {ReceivedClientData.Count}");
             }
+            // Listen for another new client.
             TaskClientConnecter = Listener.AcceptTcpClientAsync();
             Console.WriteLine("Listening for another new client...");
         }
@@ -91,12 +95,16 @@ public class Server
     {
         if (ClientDataTaskReaders[client] != null)
         {
+            // Task awaits data from client to read.
             if (ClientDataTaskReaders[client].IsCompleted)
             {
-                if (!String.IsNullOrEmpty(ClientDataTaskReaders[client].Result))
+                string? dataFromClient = ClientDataTaskReaders[client].Result;
+                if (!String.IsNullOrWhiteSpace(dataFromClient))
                 {
-                    ReceivedClientData[client] = ClientDataTaskReaders[client].Result;
+                    // The client's message to server is stored in the ReceivedClientData dict.
+                    ReceivedClientData[client] = dataFromClient;
                 }
+                // Restarts the process. The downside is that previous messages are not saved.
                 ClientDataTaskReaders[client] = ReceiveMessageFromClientAsync(client.GetStream());
             }
         }
@@ -108,13 +116,14 @@ public class Server
 
     protected void HandleAllCurrentClients()
     {
+        // Loop through all clients and read their received data when available.
         foreach (var client in ReceivedClientData.Keys)
         {
+            // Server will throw exception if a closed connection (from the client) isn't closed on the server.
+            // Use this for checking if a client is still connected:
+            // https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.socket.connected?view=net-8.0
             if (client.GetStream().Socket.Connected)
             {
-                // Server will throw exception if a closed connection (from the client) isn't closed on the server.
-                // Use this for checking if a client is still connected:
-                // https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.socket.connected?view=net-8.0
                 for (int i = 0; i < ClientDataTaskReaders.Count; i++)
                 {
                     ReadDataFromClient(client);
@@ -154,6 +163,7 @@ public class Server
             AutoFlush = true
         };
         writer.Write(message);
-        Console.WriteLine($"Server sent message: {message}");
+        Console.WriteLine($"Sending message: {message}\n" +
+            $"To client: {GetClientIPAddress(stream)}\n");
     }
 }
