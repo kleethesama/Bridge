@@ -2,6 +2,8 @@
 
 namespace TCP_Server.JsonObjects;
 
+// Used for binding Json data from client
+// to be used for the protocol.
 public class JsonProtocolObj
 {
     [JsonPropertyName("method")]
