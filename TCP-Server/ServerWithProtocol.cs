@@ -33,35 +33,52 @@ public class ServerWithProtocol : Server
             {
                 break;
             }
-            lock (ReceivedClientData)
+            CheckMessagesFromClients();
+            ProcessClientMessagesThroughProtocol();
+        }
+    }
+
+    private void CheckMessagesFromClients()
+    {
+        lock (ReceivedClientData)
+        {
+            foreach (var kvp in ReceivedClientData)
             {
-                foreach (var kvp in ReceivedClientData)
+                if (!string.IsNullOrEmpty(kvp.Value))
                 {
-                    if (!string.IsNullOrEmpty(kvp.Value))
+                    if (!_clientProtocols.ContainsKey(kvp.Key))
                     {
-                        if (!_clientProtocols.ContainsKey(kvp.Key))
-                        {
-                            var newProtocol = new SimpleProtocol();
-                            newProtocol.StartProtocolRun(kvp.Value);
-                            _clientProtocols.Add(kvp.Key, newProtocol);
-                        }
-                        else
-                        {
-                            _clientProtocols[kvp.Key].ArgsMessage = kvp.Value;
-                        }
-                        ReceivedClientData[kvp.Key] = string.Empty;
+                        var newProtocol = new SimpleProtocol();
+                        newProtocol.StartProtocolRun(kvp.Value);
+                        _clientProtocols.Add(kvp.Key, newProtocol);
                     }
+                    else
+                    {
+                        _clientProtocols[kvp.Key].ArgsMessage = kvp.Value;
+                    }
+                    ReceivedClientData[kvp.Key] = string.Empty;
                 }
             }
-            var _clientProtocolsCopy = _clientProtocols.ToDictionary(entry => entry.Key,
-                                                                     entry => entry.Value);
-            foreach (var clientProtocol in _clientProtocolsCopy)
+        }
+    }
+
+    private void ProcessClientMessagesThroughProtocol()
+    {
+        lock (_clientProtocols)
+        {
+            foreach (var kvp in _clientProtocols)
             {
-                if (clientProtocol.Value.ProtocolTask.IsCompleted)
+                if (kvp.Value.ProtocolTask.IsCompleted)
                 {
-                    SendMessageToClient(clientProtocol.Key.GetStream(),
-                        clientProtocol.Value.ProtocolTask.Result);
-                    _clientProtocols.Remove(clientProtocol.Key);
+                    SendMessageToClient(kvp.Key.GetStream(),
+                        kvp.Value.ProtocolTask.Result);
+                    _clientProtocols.Remove(kvp.Key);
+                }
+                else if (!kvp.Value.WaitingForArgs)
+                {
+                    SendMessageToClient(kvp.Key.GetStream(),
+                        "Input numbers");
+                    kvp.Value.WaitingForArgs = true;
                 }
             }
         }

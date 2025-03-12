@@ -5,7 +5,7 @@ namespace TCP_Server;
 
 public class SimpleProtocol : TextBasedArgumentProtocol
 {
-    public Task<string?> ProtocolTask { get; private set; }
+    public Task<string>? ProtocolTask { get; private set; }
 
     public enum CommandType : short
     {
@@ -14,20 +14,9 @@ public class SimpleProtocol : TextBasedArgumentProtocol
         Subtract
     }
 
-    //public SimpleProtocol(byte expectedArgsCount)
-    //{
-    //    ExpectedArgsCount = expectedArgsCount;
-    //}
-
-    //public SimpleProtocol(CommandType commandType, byte expectedArgsCount)
-    //{
-    //    ExpectedArgsCount = expectedArgsCount;
-    //}
-
     public SimpleProtocol()
     {
         ExpectedArgsCount = 2;
-        //ProtocolTask = RunProtocol(command);
     }
 
     public void StartProtocolRun(string command)
@@ -44,13 +33,13 @@ public class SimpleProtocol : TextBasedArgumentProtocol
         return ProtocolTask.Status == TaskStatus.Running;
     }
 
-    private async Task<string?> RunProtocol(string command)
+    private async Task<string> RunProtocol(string command)
     {
         // Parse command from server.
         short commandType = ParseCommandType(command, typeof(CommandType));
         if (!IsCommandValid(commandType))
         {
-            return "Command is not valid.";
+            return "Command is not valid. Please, try again.";
         }
         var newCommand = (CommandType)commandType;
         SelectCommand(newCommand);

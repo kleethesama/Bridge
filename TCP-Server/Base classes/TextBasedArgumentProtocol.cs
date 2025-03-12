@@ -4,6 +4,7 @@ public abstract class TextBasedArgumentProtocol : Protocol
 {
     public string? ArgsMessage { get; set; }
     public byte ExpectedArgsCount { get; protected set; }
+    public bool WaitingForArgs { get; set; } = false;
 
     protected int[]? FindArgumentSeperationPositions(string data)
     {
