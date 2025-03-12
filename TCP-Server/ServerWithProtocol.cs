@@ -64,22 +64,18 @@ public class ServerWithProtocol : Server
 
     private void ProcessClientMessagesThroughProtocol()
     {
-        lock (_clientProtocols)
+        foreach (var kvp in _clientProtocols)
         {
-            foreach (var kvp in _clientProtocols)
+            if (kvp.Value.ProtocolTask.IsCompleted)
             {
-                if (kvp.Value.ProtocolTask.IsCompleted)
-                {
-                    SendMessageToClient(kvp.Key.GetStream(),
-                        kvp.Value.ProtocolTask.Result);
-                    _clientProtocols.Remove(kvp.Key);
-                }
-                else if (!kvp.Value.WaitingForArgs)
-                {
-                    SendMessageToClient(kvp.Key.GetStream(),
-                        "Input numbers");
-                    kvp.Value.WaitingForArgs = true;
-                }
+                SendMessageToClient(kvp.Key.GetStream(),
+                    kvp.Value.ProtocolTask.Result);
+                _clientProtocols.Remove(kvp.Key);
+            }
+            else if (!kvp.Value.WaitingForArgs)
+            {
+                SendMessageToClient(kvp.Key.GetStream(), "Input numbers");
+                kvp.Value.WaitingForArgs = true;
             }
         }
     }
