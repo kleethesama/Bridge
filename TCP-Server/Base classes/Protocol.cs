@@ -12,8 +12,12 @@ public abstract class Protocol
     public Task<string>? ProtocolTask { get; protected set; }
 
     protected abstract void SelectCommand(short commandType);
-    protected abstract int ExecuteCommand(int value1, int value2);
     protected abstract Task<string> RunProtocol(string command);
+
+    protected int ExecuteCommand(int value1, int value2)
+    {
+        return CommandFunc(value1, value2);
+    }
 
     public void StartProtocolRun(string command)
     {

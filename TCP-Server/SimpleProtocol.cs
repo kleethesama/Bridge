@@ -29,10 +29,6 @@ public class SimpleProtocol : Protocol
 
         // Await args from server.
         await WaitForServerMessage();
-        if (ArgsMessage is null)
-        {
-            return "Timeout. Waited too long for arguments to be receieved.";
-        }
 
         // Handle args and perform command execution.
         string[]? args = SeperateArgumentsIntoArray(ArgsMessage);
@@ -66,23 +62,18 @@ public class SimpleProtocol : Protocol
         };
     }
 
-    protected override int ExecuteCommand(int value1, int value2)
-    {
-        return CommandFunc(value1, value2);
-    }
-
-    private static int Random(int minValue, int maxValue)
+    protected static int Random(int minValue, int maxValue)
     {
         var randomizer = new Random();
         return randomizer.Next(minValue, maxValue + 1); // +1 to include maxValue in range.
     }
 
-    private static int Add(int value1, int value2)
+    protected static int Add(int value1, int value2)
     {
         return value1 + value2;
     }
 
-    private static int Subtract(int value1, int value2)
+    protected static int Subtract(int value1, int value2)
     {
         return value1 - value2;
     }
