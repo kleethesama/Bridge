@@ -97,14 +97,6 @@ public abstract class Protocol
         return parsedArgs;
     }
 
-    protected async Task WaitForServerMessage()
-    {
-        while (ArgsMessage is null)
-        {
-            await Task.Yield();
-        }
-    }
-
     protected static short ParseCommandType(string command, Type enumType)
     {
         ImmutableList<string> list = Enum.GetNames(enumType).ToImmutableList();

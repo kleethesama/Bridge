@@ -5,6 +5,8 @@ namespace TCP_Server;
 
 public class SimpleProtocol : Protocol
 {
+    public ServerMessageWaiter? MessageWaiter { get; private set; }
+
     public enum CommandType : short
     {
         Random,
@@ -28,7 +30,8 @@ public class SimpleProtocol : Protocol
         SelectCommand(commandType);
 
         // Await args from server.
-        await WaitForServerMessage();
+        MessageWaiter = new ServerMessageWaiter(this, "Input numbers");
+        await MessageWaiter.WaitForServerMessage();
 
         // Handle args and perform command execution.
         string[]? args = SeperateArgumentsIntoArray(ArgsMessage);
@@ -60,6 +63,32 @@ public class SimpleProtocol : Protocol
             CommandType.Subtract => Subtract,
             _ => throw new CommandNotSelectedException("A command was not selected."),
         };
+    }
+
+    public class ServerMessageWaiter
+    {
+        private readonly SimpleProtocol _masterInstance;
+        public string? WaitMessageForServer { get; private set; }
+        public bool IsWaitMessagePushed { get; set; } = false;
+
+        public ServerMessageWaiter(SimpleProtocol simpleProtocol)
+        {
+            _masterInstance = simpleProtocol;
+        }
+
+        public ServerMessageWaiter(SimpleProtocol simpleProtocol, string waitMessage)
+        {
+            _masterInstance = simpleProtocol;
+            WaitMessageForServer = waitMessage;
+        }
+
+        public async Task WaitForServerMessage()
+        {
+            while (_masterInstance.ArgsMessage is null)
+            {
+                await Task.Yield();
+            }
+        }
     }
 
     protected static int Random(int minValue, int maxValue)

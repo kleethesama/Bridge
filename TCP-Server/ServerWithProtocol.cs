@@ -72,10 +72,13 @@ public class ServerWithProtocol : Server
                     kvp.Value.ProtocolTask.Result);
                 _clientProtocols.Remove(kvp.Key);
             }
-            else if (!kvp.Value.WaitingForArgs)
+            else if (kvp.Value.MessageWaiter is not null
+                 && !kvp.Value.MessageWaiter.IsWaitMessagePushed
+                 &&  kvp.Value.MessageWaiter.WaitMessageForServer is not null)
             {
-                SendMessageToClient(kvp.Key.GetStream(), "Input numbers");
-                kvp.Value.WaitingForArgs = true;
+                SendMessageToClient(kvp.Key.GetStream(),
+                    kvp.Value.MessageWaiter.WaitMessageForServer);
+                kvp.Value.MessageWaiter.IsWaitMessagePushed = true;
             }
         }
     }
