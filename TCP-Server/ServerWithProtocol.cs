@@ -48,7 +48,7 @@ public class ServerWithProtocol : Server
                 {
                     if (!_clientProtocols.ContainsKey(kvp.Key))
                     {
-                        var newProtocol = new SimpleProtocol(2);
+                        var newProtocol = new SimpleJSONProtocol(2);
                         newProtocol.StartProtocolRun(kvp.Value);
                         _clientProtocols.Add(kvp.Key, newProtocol);
                     }
