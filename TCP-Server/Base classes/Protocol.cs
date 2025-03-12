@@ -101,7 +101,7 @@ public abstract class Protocol
         }
     }
 
-    protected short ParseCommandType(string command, Type enumType)
+    protected static short ParseCommandType(string command, Type enumType)
     {
         ImmutableList<string> list = Enum.GetNames(enumType).ToImmutableList();
         int commandIndex = list.FindIndex(
